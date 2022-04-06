@@ -1,9 +1,9 @@
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.0;
 
 contract VendingMachine{
-
     address public owner;
-    mapping (address =>uint) VMBalances;
+    mapping (address =>uint) public VMBalances;
 
     constructor () {
         owner=msg.sender;
@@ -12,6 +12,10 @@ contract VendingMachine{
 
     function getInventoryBalance() public view returns(uint) {
         return VMBalances[address(this)];
+    }
+
+    function getBuyerBalance() public view returns(uint) {
+        return VMBalances[msg.sender];
     }
 
     modifier onlyOwner () {
@@ -24,8 +28,8 @@ contract VendingMachine{
     }
 
     function purchase(uint amount) public payable  {
-        require(VMBalances[address(this)] >= amount);
-        require(msg.value >= amount * 0.1 ether);
+        require(VMBalances[address(this)] >= amount ,"no dontus equal these amounts");
+        require(msg.value >= amount * 0.1 ether ,"Value is less than donuts price");
         VMBalances[address(this)] -=amount;
         VMBalances[msg.sender] +=amount;
     }
