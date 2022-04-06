@@ -23,9 +23,23 @@ module.exports = async function (callback) {
     // get Inventory Balance
     console.log(`Inventory Balance : ${await vendingmachine.getInventoryBalance()} donuts `);
     // get Buyer Balance
-    console.log(`Inventory Balance : ${await vendingmachine.VMBalances(buyer)} donuts ` );
+    console.log(`Buyer Balance : ${await vendingmachine.VMBalances(buyer)} donuts ` );
 
-    // // deposit 2 token
+    // // Purchase 1 Donuts
+
+    const donutsQt=1;
+    //await vendingmachine.purchase(donutsQt,{from:accounts[0] , to:Owner});
+    await vendingmachine.purchase(donutsQt,{
+      from:accounts[0],
+      value:web3.utils.toWei('0.1','ether') * donutsQt,
+      to:Owner
+  });
+  // get Inventory Balance
+  console.log(`Inventory Balance after purchase : ${await vendingmachine.getInventoryBalance()} donuts `);
+  // get Buyer Balance
+  console.log(`Buyer Balance : ${await vendingmachine.VMBalances(buyer)} donuts ` );
+
+
     // await ethpool.deposit(receiver, amount, { from: sender })
     // console.log(`Transferred ${amount} ether from ${sender} to ${receiver}`)
     // // get Total ETHPool
