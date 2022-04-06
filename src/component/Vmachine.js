@@ -7,11 +7,13 @@ const VMachine = () => {
     const [Err,setErr]=useState('')
     const [inventory,setInventory]=useState('');
     const [myDonuts,setMyDonuts]=useState('');
-    const[donutsQt,setdonutsQt]=useState('')
+    const[donutsQt,setdonutsQt]=useState('');
+    const [success,setSuccess]=useState('');
    
     let web3;
     web3= new Web3(window.ethereum);
     const vmContract = new web3.eth.Contract(VMContract.abi, '0xCFf57279628333c6659882944b48111AAcAa9110')
+    
 
     const connectWalletHandler =async ()=>{
 
@@ -70,6 +72,10 @@ const VMachine = () => {
                 from:accounts[0],
                 value:web3.utils.toWei('0.1','ether') * donutsQt
             });
+
+            setSuccess(`${donutsQt} : are purchased`)
+            inventoryHandler();
+            myDonutsHandler();
             
         }
         catch (err) {
@@ -79,11 +85,12 @@ const VMachine = () => {
 
 
     }
-    useEffect (()=>{
+    useEffect (async()=>{
         if(vmContract) inventoryHandler();
-
+        const addresses=  await web3.eth.getAccounts();
+        if(addresses[0])  myDonutsHandler();
     },[
-         myDonutsHandler()
+        
     ])
 
 
@@ -98,6 +105,7 @@ const VMachine = () => {
                     <p>Vending Machine Inventory : {inventory}</p>
                     <p>My Donuts : {myDonuts}</p>
                     <p>{Err}</p>
+                    <p>{success}</p>
 
                     <div className="field">
                         <label className="label"> buy Donuts </label>
