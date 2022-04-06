@@ -4,30 +4,34 @@ import Web3 from 'web3';
 import VMContract from '../abis/VendingMachine.json'
 const VMachine = () => {
 
-    const [connectionErr,setconnectionErr]=useState('')
+    const [Err,setErr]=useState('')
     const [inventory,setInventory]=useState('');
     const [myDonuts,setMyDonuts]=useState('');
+    const[donutsQt,setdonutsQt]=useState('')
+   
     let web3;
     web3= new Web3(window.ethereum);
     const vmContract = new web3.eth.Contract(VMContract.abi, '0xCFf57279628333c6659882944b48111AAcAa9110')
+
     const connectWalletHandler =async ()=>{
+
         if(typeof window !=='undefined' && typeof window.ethereum !=='undefined') {
             //
             try {
                 await window.ethereum.request({method: "eth_requestAccounts"});
-                myDonutsHandler()
+               
+               // myDonutsHandler()
             }
             catch(err) {
-                setconnectionErr(err.message)
+                setErr(err.message)
             }
            
         }
             else {
 
-                setconnectionErr("Please install meta mask")
+                setErr("Please install meta mask")
             }
     }
-
     const inventoryHandler= async() => {
         try {
             const inventory =await vmContract.methods.getInventoryBalance().call();
@@ -35,30 +39,52 @@ const VMachine = () => {
 
         }
         catch (err) {
-            setconnectionErr(err.message)
+            setErr(err.message)
 
         }
     }
 
     const myDonutsHandler = async()=> {
         try {
-            //const accounts=  await web3.eth.getAccounts();
-           const count= await vmContract.methods.getBuyerBalance().call();
-            //console.log(accounts[0]);
-           // console.log(count);
+            const accounts=  await web3.eth.getAccounts();
+            console.log(accounts[0])
+           const count= await vmContract.methods.VMBalances(accounts[0]).call();
+           console.log(count)
             setMyDonuts(count);
 
         }
         catch(err) {
-            setconnectionErr(err.message)
+            setErr(err.message)
         }
         
     }
     
-    useEffect (()=>{
-        inventoryHandler();
+    const donutsChangeHandler = (event) =>{
+        setdonutsQt(event.target.value)
+    }
 
-    },[])
+    const buyDonutsHandler = async() =>{
+        try {
+            const accounts=  await web3.eth.getAccounts();
+            await vmContract.methods.purchase(donutsQt).send({
+                from:accounts[0],
+                value:web3.utils.toWei('0.1','ether') * donutsQt
+            });
+            
+        }
+        catch (err) {
+            setErr(err.message)
+        }
+       
+
+
+    }
+    useEffect (()=>{
+        if(vmContract) inventoryHandler();
+
+    },[
+         myDonutsHandler()
+    ])
 
 
 
@@ -71,8 +97,18 @@ const VMachine = () => {
                     <h1>Vending Machine dApp</h1>
                     <p>Vending Machine Inventory : {inventory}</p>
                     <p>My Donuts : {myDonuts}</p>
-                    
-                    <p>{connectionErr}</p>
+                    <p>{Err}</p>
+
+                    <div className="field">
+                        <label className="label"> buy Donuts </label>
+                        <div className="control">
+                            <input type="text" onChange={donutsChangeHandler} className="input" placeholder='Enter Amount..' />
+                        </div>
+                        <button className='button is-primary' onClick={buyDonutsHandler} >Buy </button>
+
+                        </div>
+
+                   
                     
                     </div>
                     
