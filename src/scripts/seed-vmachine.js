@@ -18,15 +18,13 @@ module.exports = async function (callback) {
     //const receiver =accounts[1]
     const Owner = '0xCFf57279628333c6659882944b48111AAcAa9110'
     console.log('Reciever Address fetched', Owner)
-    let amount = web3.utils.toWei('0.1', 'ether') 
-
+  
     // get Inventory Balance
     console.log(`Inventory Balance : ${await vendingmachine.getInventoryBalance()} donuts `);
     // get Buyer Balance
     console.log(`Buyer Balance : ${await vendingmachine.VMBalances(buyer)} donuts ` );
 
     // // Purchase 1 Donuts
-
     const donutsQt=1;
     //await vendingmachine.purchase(donutsQt,{from:accounts[0] , to:Owner});
     await vendingmachine.purchase(donutsQt,{
@@ -34,17 +32,10 @@ module.exports = async function (callback) {
       value:web3.utils.toWei('0.1','ether') * donutsQt,
       to:Owner
   });
-  // get Inventory Balance
+  // get Inventory Balance after purchase Donuts
   console.log(`Inventory Balance after purchase : ${await vendingmachine.getInventoryBalance()} donuts `);
-  // get Buyer Balance
-  console.log(`Buyer Balance : ${await vendingmachine.VMBalances(buyer)} donuts ` );
-
-
-    // await ethpool.deposit(receiver, amount, { from: sender })
-    // console.log(`Transferred ${amount} ether from ${sender} to ${receiver}`)
-    // // get Total ETHPool
-    // let totalEth = await ethpool.totalEth()
-    // console.log(`Total ETH at the Pool ${totalEth} `)
+  // get Buyer Balance after purchase Donuts
+  console.log(`Buyer Balance after purchase : ${await vendingmachine.VMBalances(buyer)} donuts ` );
 
   }
   catch (error) {
